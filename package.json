@@ -9,6 +9,8 @@
   "author": "Prakhar Baveja",
   "license": "ISC",
   "dependencies": {
+    "chalk": "^3.0.0",
+    "cli-progress": "^3.4.0",
     "request": "^2.88.0",
     "request-progress": "^3.0.0",
     "rss-parser": "^3.7.3"

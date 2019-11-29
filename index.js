@@ -5,12 +5,16 @@ const https = require('https');
 var request = require('request');
 var progress = require('request-progress');
 const fs = require('fs');
+const cliProgress = require('cli-progress');
+const chalk = require('chalk');
 const dir = './OUTPUT/';
 
 function processItems(item, podcastFolder) {
 	return new Promise(async (resolve, reject) => {
-		console.log('\x1b[42m%s\x1b[0m',"EPISODE")
-		console.log("Title: " + item.title + ', Play URL:' + item.enclosure.url) // title of episodes + play url
+		// Display details
+		console.log(chalk.bold.blue('Episode Title: '), item.title);
+		console.log(chalk.bold.blue('Play URL: '), item.enclosure.url);
+		console.log('\n');
 
 		// Make episode folder
 		const episodeFolder = podcastFolder + '/' + item.title; //'Episode '+ index +' - '+
@@ -19,27 +23,34 @@ function processItems(item, podcastFolder) {
 			await fs.mkdirSync(episodeFolder);
 		}
 		
-		console.log('\x1b[34m%s\x1b[0m',"Starting episode download...")
+		console.log(chalk.blue('Starting episode download...'))
+		
+		const bar = new cliProgress.SingleBar({}, cliProgress.Presets.rect);
+		bar.start(100, 0);
 
 	    const response = await progress(request(item.enclosure.url))
 	    .on('progress', function (state) {
-			console.log("Progress :: ", (state.percent*100).toFixed(2) + '%')
+			// console.log("Progress :: ", (state.percent*100).toFixed(2) + '%')
+			bar.update((state.percent*100).toFixed(0));
 		})
 		.on('error', function (err) {
 			console.log(err);
 			reject("ERROR");
 		})
 		.on('end', function () {
-			resolve("File download completed!");
+			bar.update(100); // set bar to 100 to indicate completeness
+			bar.stop();
+			resolve("Download Complete!");
 		})
 		.pipe(fs.createWriteStream(episodeFolder + '/' + item.title+'.mp3'));
 	});
 };
 
 (async () => {
-	for (var i = 0; i < data.podcasts.length; i++) {
-		console.log("Data Title: ", data.podcasts[i].title); // title of podcast from data
-		console.log("=====================================")
+	for (var i = 0; i < 1; i++) {// data.podcasts.length; i++) {
+		
+		// console.log("PODCAST TITLE - x1b[32m%s\x1b[0m", data.podcasts[i].title);
+		console.log('---------STARTING---------');
 		let feed = await parser.parseURL(data.podcasts[i].rss);
 		
 		// Make OUTPUT folder if it doesn't exist
@@ -53,17 +64,21 @@ function processItems(item, podcastFolder) {
 			await fs.mkdirSync(podcastFolder);
 		}
 
-		console.log("RSS Title: ",feed.title); // title from rss
-		console.log("=====================================")
+		console.log('Podcast Title : ', feed.title);
+		console.log('\n');
+
 		for (const item of feed.items) {
 			const res = await processItems(item, podcastFolder);
 			if (res === "ERROR") {
-				console.log('\x1b[31m%s\x1b[0m', res);
+				console.log(chalk.bold.red(res));
 			} else {
-				console.log('\x1b[32m%s\x1b[0m', res);
-				console.log("=====================================")
+				console.log(chalk.bold.green(res));
+				console.log('\n');
 			}
 		}
+
+		console.log('---------END---------');
+
 	}
 
 })();
