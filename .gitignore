@@ -1,5 +1,7 @@
 # Output
 OUTPUT/
+# Data
+data.json
 
 # Logs
 logs
