@@ -13,7 +13,7 @@ function processItems(item, podcastFolder) {
 	return new Promise(async (resolve, reject) => {
 		// Display details
 		console.log(chalk.bold.blue('Episode Title: '), item.title);
-		console.log(chalk.bold.blue('Play URL: '), item.enclosure.url);
+		console.log(chalk.bold.blue('Audio URL: '), item.enclosure.url);
 		console.log('\n');
 
 		// Make episode folder
@@ -34,7 +34,7 @@ function processItems(item, podcastFolder) {
 			bar.update((state.percent*100).toFixed(0));
 		})
 		.on('error', function (err) {
-			console.log(err);
+			console.log(chalk.red(err));
 			reject("ERROR");
 		})
 		.on('end', function () {
@@ -47,10 +47,10 @@ function processItems(item, podcastFolder) {
 };
 
 (async () => {
-	for (var i = 0; i < 1; i++) {// data.podcasts.length; i++) {
+	for (var i = 0; i < data.podcasts.length; i++) {
 		
 		// console.log("PODCAST TITLE - x1b[32m%s\x1b[0m", data.podcasts[i].title);
-		console.log('---------STARTING---------');
+		console.log(chalk.white.dim('STARTING...'));
 		let feed = await parser.parseURL(data.podcasts[i].rss);
 		
 		// Make OUTPUT folder if it doesn't exist
@@ -68,16 +68,17 @@ function processItems(item, podcastFolder) {
 		console.log('\n');
 
 		for (const item of feed.items) {
-			const res = await processItems(item, podcastFolder);
-			if (res === "ERROR") {
-				console.log(chalk.bold.red(res));
-			} else {
-				console.log(chalk.bold.green(res));
+			try { 
+				const status = await processItems(item, podcastFolder);
+				console.log(chalk.bold.green(status));
 				console.log('\n');
+			} catch(e) {
+				console.log(e);
+				console.log(chalk.bold.red(e));
 			}
 		}
 
-		console.log('---------END---------');
+		console.log(chalk.white.dim('...END PODCAST'));
 
 	}
 
