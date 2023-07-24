@@ -13,6 +13,7 @@
     "cli-progress": "^3.4.0",
     "request": "^2.88.0",
     "request-progress": "^3.0.0",
-    "rss-parser": "^3.7.3"
+    "rss-parser": "^3.7.3",
+    "slugify": "^1.6.6"
   }
 }

@@ -7,6 +7,7 @@ var progress = require('request-progress');
 const fs = require('fs');
 const cliProgress = require('cli-progress');
 const chalk = require('chalk');
+var slugify = require('slugify')
 const dir = './OUTPUT/';
 
 function processItems(item, podcastFolder) {
@@ -17,7 +18,7 @@ function processItems(item, podcastFolder) {
 		console.log('\n');
 
 		// Make episode folder
-		const episodeFolder = podcastFolder + '/' + item.title; //'Episode '+ index +' - '+
+		const episodeFolder = podcastFolder + '/' + slugify(item.title); //'Episode '+ index +' - '+
 		// console.log("FOLDER",episodeFolder);
 		if (!fs.existsSync(episodeFolder)){
 			await fs.mkdirSync(episodeFolder);
@@ -59,7 +60,7 @@ function processItems(item, podcastFolder) {
 		}
 
 		// Make directory with podcast title
-		const podcastFolder = dir + data.podcasts[i].title;
+		const podcastFolder = dir + slugify(data.podcasts[i].title);
 		if (!fs.existsSync(podcastFolder)){
 			await fs.mkdirSync(podcastFolder);
 		}
