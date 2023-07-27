@@ -43,7 +43,7 @@ function processItems(item, podcastFolder) {
 			bar.stop();
 			resolve("Download Complete!");
 		})
-		.pipe(fs.createWriteStream(episodeFolder + '/' + item.title+'.mp3'));
+		.pipe(fs.createWriteStream(episodeFolder + '/' + slugify(item.title)+'.mp3'));
 	});
 };
 
