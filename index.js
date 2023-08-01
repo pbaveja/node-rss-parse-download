@@ -18,7 +18,7 @@ function processItems(item, podcastFolder) {
 		console.log('\n');
 
 		// Make episode folder
-		const episodeFolder = podcastFolder + '/' + slugify(item.title).replace(':',''); //'Episode '+ index +' - '+
+		const episodeFolder = podcastFolder + '/' + slugify(item.title, {remove: /[*+~.()'"!:@]/g}); //'Episode '+ index +' - '+
 		// console.log("FOLDER",episodeFolder);
 		if (!fs.existsSync(episodeFolder)){
 			await fs.mkdirSync(episodeFolder);
@@ -43,7 +43,7 @@ function processItems(item, podcastFolder) {
 			bar.stop();
 			resolve("Download Complete!");
 		})
-		.pipe(fs.createWriteStream(episodeFolder + '/' + slugify(item.title).replace(':','')+'.mp3'));
+		.pipe(fs.createWriteStream(episodeFolder + '/' + slugify(item.title, {remove: /[*+~.()'"!:@]/g})+'.mp3'));
 	});
 };
 
@@ -60,7 +60,7 @@ function processItems(item, podcastFolder) {
 		}
 
 		// Make directory with podcast title
-		const podcastFolder = dir + slugify(data.podcasts[i].title).replace(':','');
+		const podcastFolder = dir + slugify(data.podcasts[i].title, {remove: /[*+~.()'"!:@]/g});
 		if (!fs.existsSync(podcastFolder)){
 			await fs.mkdirSync(podcastFolder);
 		}
